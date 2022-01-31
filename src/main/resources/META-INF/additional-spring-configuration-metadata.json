@@ -1,0 +1,58 @@
+{
+  "properties": [
+    {
+      "name": "passportServiceApi.common.protocol",
+      "type": "java.lang.String",
+      "description": "Description for passportServiceApi.common.protocol."
+    },
+    {
+      "name": "passportServiceApi.common.host",
+      "type": "java.lang.String",
+      "description": "Description for passportServiceApi.common.host."
+    },
+    {
+      "name": "passportServiceApi.common.port",
+      "type": "java.lang.String",
+      "description": "Description for passportServiceApi.common.port."
+    },
+    {
+      "name": "passportServiceApi.entry.passport",
+      "type": "java.lang.String",
+      "description": "Description for passportServiceApi.entry.passport."
+    },
+    {
+      "name": "passportServiceApi.entry.save",
+      "type": "java.lang.String",
+      "description": "Description for passportServiceApi.entry.save."
+    },
+    {
+      "name": "passportServiceApi.entry.update",
+      "type": "java.lang.String",
+      "description": "Description for passportServiceApi.entry.update."
+    },
+    {
+      "name": "passportServiceApi.entry.delete",
+      "type": "java.lang.String",
+      "description": "Description for passportServiceApi.entry.delete."
+    },
+    {
+      "name": "passportServiceApi.entry.find",
+      "type": "java.lang.String",
+      "description": "Description for passportServiceApi.entry.find."
+    },
+    {
+      "name": "passportServiceApi.entry.findBySerial",
+      "type": "java.lang.String",
+      "description": "Description for passportServiceApi.entry.findBySerial."
+    },
+    {
+      "name": "passportServiceApi.entry.unavailable",
+      "type": "java.lang.String",
+      "description": "Description for passportServiceApi.entry.unavailable."
+    },
+    {
+      "name": "passportServiceApi.entry.findReplaceable",
+      "type": "java.lang.String",
+      "description": "Description for passportServiceApi.entry.findReplaceable."
+    }
+  ] }

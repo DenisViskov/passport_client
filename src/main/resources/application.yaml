@@ -1,0 +1,14 @@
+passportServiceApi:
+  common:
+      protocol: http
+      host: localhost
+      port: 9090
+  entry:
+      passport: /passport
+      save: ${passportServiceApi.entry.passport}/save
+      update: ${passportServiceApi.entry.passport}/update
+      delete: ${passportServiceApi.entry.passport}/delete
+      find: ${passportServiceApi.entry.passport}/find
+      findBySerial: ${passportServiceApi.entry.find}
+      unavailable: ${passportServiceApi.entry.passport}/unavailable
+      findReplaceable: ${passportServiceApi.entry.passport}/find-replaceable
