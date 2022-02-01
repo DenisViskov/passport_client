@@ -5,10 +5,10 @@ passportServiceApi:
       port: 9090
   entry:
       passport: /passport
-      save: ${passportServiceApi.entry.passport}/save
-      update: ${passportServiceApi.entry.passport}/update
-      delete: ${passportServiceApi.entry.passport}/delete
-      find: ${passportServiceApi.entry.passport}/find
+      save: /save
+      update: /update
+      delete: /delete
+      find: /find
       findBySerial: ${passportServiceApi.entry.find}
-      unavailable: ${passportServiceApi.entry.passport}/unavailable
-      findReplaceable: ${passportServiceApi.entry.passport}/find-replaceable
+      unavailable: /unavailable
+      findReplaceable: /find-replaceable
