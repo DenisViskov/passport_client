@@ -4,8 +4,6 @@ import com.example.passport_client.config.PassportServiceApiInfoHolder;
 import com.example.passport_client.dto.PassportDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -68,19 +66,42 @@ public class PassportServiceImpl implements PassportService<PassportDto> {
         return webClient.get()
             .uri(apiInfoHolder.getEntry().getFind())
             .retrieve()
-            .bodyToMono(PassportDto.class)
-            .doOnError(err -> log.error("couldn't get passports"));
+            .bodyToFlux(PassportDto.class)
+            .doOnError(err -> log.error("couldn't get passports, message: {}", err.getMessage()))
+            .collectList()
+            .block();
     }
 
     @Override public List<PassportDto> findBySerial(final Long serial) {
-        return null;
+        return webClient.get()
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment(apiInfoHolder.getEntry().getFindBySerial())
+                .query("serial")
+                .build(serial))
+            .retrieve()
+            .bodyToFlux(PassportDto.class)
+            .doOnError(err -> log.error("couldn't get passports by serial, message: {}", err.getMessage()))
+            .collectList()
+            .block();
     }
 
     @Override public List<PassportDto> findUnavailable() {
-        return null;
+        return webClient.get()
+            .uri(apiInfoHolder.getEntry().getUnavailable())
+            .retrieve()
+            .bodyToFlux(PassportDto.class)
+            .doOnError(err -> log.error("couldn't get unavailable passports, message: {}", err.getMessage()))
+            .collectList()
+            .block();
     }
 
     @Override public List<PassportDto> findReplaceable() {
-        return null;
+        return webClient.get()
+            .uri(apiInfoHolder.getEntry().getFindReplaceable())
+            .retrieve()
+            .bodyToFlux(PassportDto.class)
+            .doOnError(err -> log.error("couldn't get replaceable passports, message: {}", err.getMessage()))
+            .collectList()
+            .block();
     }
 }
