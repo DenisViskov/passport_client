@@ -2,10 +2,10 @@ package com.example.passport_client.service;
 
 import com.example.passport_client.config.PassportServiceApiInfoHolder;
 import com.example.passport_client.dto.PassportDto;
+import com.jayway.jsonpath.internal.Utils;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
-import org.assertj.core.api.Condition;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -13,8 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 
@@ -52,16 +50,37 @@ class PassportServiceImplTest implements WithAssertions {
         assertThat(recordedRequest.getMethod()).isNotNull()
             .isEqualToIgnoringCase("post");
 
-        assertThat(recordedRequest.getPath()).isNotNull()
-            .isEqualTo(
-                "%s%s",
-                infoHolder.getEntry().getPassport(),
-                infoHolder.getEntry().getSave()
+        assertThat(recordedRequest.getPath())
+            .isEqualTo(Utils.concat(
+                    infoHolder.getEntry().getPassport(),
+                    infoHolder.getEntry().getSave()
+                )
             );
     }
 
     @Test
-    void update() {
+    void update() throws InterruptedException {
+        final boolean expected = true;
+        WEB_SERVER.enqueue(new MockResponse()
+            .setBody(String.valueOf(expected))
+            .setHeader("Content-Type", MediaType.APPLICATION_JSON.toString())
+        );
+
+        final boolean result = service.update(PassportDto.builder().id(1L).build());
+        final RecordedRequest recordedRequest = WEB_SERVER.takeRequest();
+
+        assertThat(result).isNotNull()
+            .isTrue();
+
+        assertThat(recordedRequest.getMethod()).isNotNull()
+            .isEqualToIgnoringCase("put");
+
+        assertThat(recordedRequest.getPath())
+            .isEqualTo(Utils.concat(
+                    infoHolder.getEntry().getPassport(),
+                    infoHolder.getEntry().getUpdate()
+                )
+            );
     }
 
     @Test
