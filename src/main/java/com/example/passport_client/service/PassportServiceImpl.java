@@ -32,9 +32,9 @@ public class PassportServiceImpl implements PassportService<PassportDto> {
     @Override public boolean update(final PassportDto passport) {
         return webClient.put()
             .uri(uriBuilder -> uriBuilder
-                .pathSegment(apiInfoHolder.getEntry().getUpdate())
-                .query("id")
-                .build(passport.getId())
+                .path(apiInfoHolder.getEntry().getUpdate())
+                .queryParam("id", passport.getId())
+                .build()
             )
             .bodyValue(passport)
             .retrieve()
@@ -51,9 +51,9 @@ public class PassportServiceImpl implements PassportService<PassportDto> {
     @Override public boolean delete(final Long id) {
         return webClient.delete()
             .uri(uriBuilder -> uriBuilder
-                .pathSegment(apiInfoHolder.getEntry().getDelete())
-                .query("id")
-                .build(id)
+                .path(apiInfoHolder.getEntry().getDelete())
+                .queryParam("id", id)
+                .build()
             )
             .retrieve()
             .bodyToMono(Boolean.class)
@@ -75,9 +75,10 @@ public class PassportServiceImpl implements PassportService<PassportDto> {
     @Override public List<PassportDto> findBySerial(final Long serial) {
         return webClient.get()
             .uri(uriBuilder -> uriBuilder
-                .pathSegment(apiInfoHolder.getEntry().getFindBySerial())
-                .query("serial")
-                .build(serial))
+                .path(apiInfoHolder.getEntry().getFindBySerial())
+                .queryParam("serial", serial)
+                .build()
+            )
             .retrieve()
             .bodyToFlux(PassportDto.class)
             .doOnError(err -> log.error("couldn't get passports by serial, message: {}", err.getMessage()))
