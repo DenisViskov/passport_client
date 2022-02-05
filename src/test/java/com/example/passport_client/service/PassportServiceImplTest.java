@@ -122,7 +122,8 @@ class PassportServiceImplTest implements WithAssertions {
             PassportDto.builder()
                 .id(2L)
                 .serial(1234L)
-                .name("Test").build()
+                .name("Test")
+                .build()
         );
         WEB_SERVER.enqueue(new MockResponse()
             .setBody(mapper.writeValueAsString(expected))
@@ -134,7 +135,13 @@ class PassportServiceImplTest implements WithAssertions {
 
         assertThat(result).isNotNull()
             .hasSize(1)
-            .contains(expected.get(0));
+            .isEqualTo(expected);
+
+        assertThat(recordedRequest.getMethod()).isNotNull()
+            .isEqualToIgnoringCase("get");
+
+        assertThat(recordedRequest.getPath()).isNotNull()
+            .isEqualTo(Utils.concat())
     }
 
     @Test
