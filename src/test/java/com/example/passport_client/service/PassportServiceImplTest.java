@@ -68,7 +68,7 @@ class PassportServiceImplTest implements WithAssertions {
 
         final var result = exchange(
             expected,
-            service -> service.update(PassportDto.builder().id(expectedId).build())
+            service -> service.update(PassportDto.builder().id(expectedId).build(), expectedId)
         );
 
         assertThat(result).isNotNull()

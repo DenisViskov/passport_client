@@ -5,7 +5,7 @@ import java.util.List;
 public interface PassportService<T> {
     Long save(T passport);
 
-    boolean update(T passport);
+    boolean update(T passport, final Long id);
 
     boolean delete(final Long id);
 

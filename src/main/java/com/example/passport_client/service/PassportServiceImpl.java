@@ -6,8 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriBuilder;
 
+import java.net.URI;
 import java.util.List;
+import java.util.function.Function;
 
 @Slf4j
 @Service
@@ -29,11 +32,11 @@ public class PassportServiceImpl implements PassportService<PassportDto> {
             .block();
     }
 
-    @Override public boolean update(final PassportDto passport) {
+    @Override public boolean update(final PassportDto passport, final Long id) {
         return webClient.put()
             .uri(uriBuilder -> uriBuilder
                 .path(apiInfoHolder.getEntry().getUpdate())
-                .queryParam("id", passport.getId())
+                .queryParam("id", id)
                 .build()
             )
             .bodyValue(passport)
@@ -63,45 +66,40 @@ public class PassportServiceImpl implements PassportService<PassportDto> {
     }
 
     @Override public List<PassportDto> findAll() {
-        return webClient.get()
-            .uri(apiInfoHolder.getEntry().getFind())
-            .retrieve()
-            .bodyToFlux(PassportDto.class)
-            .doOnError(err -> log.error("couldn't get passports, message: {}", err.getMessage()))
-            .collectList()
-            .block();
+        return fetchSeveral(uriBuilder -> uriBuilder
+            .path(apiInfoHolder.getEntry().getFind())
+            .build()
+        );
     }
 
     @Override public List<PassportDto> findBySerial(final Long serial) {
-        return webClient.get()
-            .uri(uriBuilder -> uriBuilder
-                .path(apiInfoHolder.getEntry().getFindBySerial())
-                .queryParam("serial", serial)
-                .build()
-            )
-            .retrieve()
-            .bodyToFlux(PassportDto.class)
-            .doOnError(err -> log.error("couldn't get passports by serial, message: {}", err.getMessage()))
-            .collectList()
-            .block();
+        return fetchSeveral(uriBuilder -> uriBuilder
+            .path(apiInfoHolder.getEntry().getFindBySerial())
+            .queryParam("serial", serial)
+            .build()
+        );
     }
 
     @Override public List<PassportDto> findUnavailable() {
-        return webClient.get()
-            .uri(apiInfoHolder.getEntry().getUnavailable())
-            .retrieve()
-            .bodyToFlux(PassportDto.class)
-            .doOnError(err -> log.error("couldn't get unavailable passports, message: {}", err.getMessage()))
-            .collectList()
-            .block();
+        return fetchSeveral(uriBuilder -> uriBuilder
+            .path(apiInfoHolder.getEntry().getUnavailable())
+            .build()
+        );
     }
 
     @Override public List<PassportDto> findReplaceable() {
+        return fetchSeveral(uriBuilder -> uriBuilder
+            .path(apiInfoHolder.getEntry().getFindReplaceable())
+            .build()
+        );
+    }
+
+    private List<PassportDto> fetchSeveral(final Function<UriBuilder, URI> uriFunction) {
         return webClient.get()
-            .uri(apiInfoHolder.getEntry().getFindReplaceable())
+            .uri(uriFunction)
             .retrieve()
             .bodyToFlux(PassportDto.class)
-            .doOnError(err -> log.error("couldn't get replaceable passports, message: {}", err.getMessage()))
+            .doOnError(err -> log.error("couldn't get passports, message: {}", err.getMessage()))
             .collectList()
             .block();
     }
