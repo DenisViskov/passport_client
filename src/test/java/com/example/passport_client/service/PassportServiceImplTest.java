@@ -9,7 +9,7 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 import org.assertj.core.api.WithAssertions;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +19,7 @@ import org.springframework.http.MediaType;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 @SpringBootTest
 class PassportServiceImplTest implements WithAssertions {
@@ -40,80 +41,70 @@ class PassportServiceImplTest implements WithAssertions {
     }
 
     @Test
-    void save() throws InterruptedException {
+    void save() throws InterruptedException, JsonProcessingException {
         final Long expected = 1L;
-        WEB_SERVER.enqueue(new MockResponse()
-            .setBody(String.valueOf(expected))
-            .setHeader("Content-Type", MediaType.APPLICATION_JSON.toString())
-        );
 
-        final Long result = service.save(PassportDto.builder().build());
-        final RecordedRequest recordedRequest = WEB_SERVER.takeRequest();
+        final var result = exchange(
+            expected,
+            service -> service.save(PassportDto.builder().serial(1234L).build())
+        );
 
         assertThat(result).isNotNull()
             .isEqualTo(expected);
 
-        assertThat(recordedRequest.getMethod()).isNotNull()
-            .isEqualToIgnoringCase("post");
-
-        assertThat(recordedRequest.getPath())
-            .isEqualTo(Utils.concat(
-                    infoHolder.getEntry().getPassport(),
-                    infoHolder.getEntry().getSave()
-                )
-            );
+        assertRequest(
+            HttpMethod.POST,
+            Utils.concat(
+                infoHolder.getEntry().getPassport(),
+                infoHolder.getEntry().getSave()
+            )
+        );
     }
 
     @Test
-    void update() throws InterruptedException {
+    void update() throws InterruptedException, JsonProcessingException {
         final boolean expected = true;
-        WEB_SERVER.enqueue(new MockResponse()
-            .setBody(String.valueOf(expected))
-            .setHeader("Content-Type", MediaType.APPLICATION_JSON.toString())
-        );
+        final Long expectedId = 1L;
 
-        final boolean result = service.update(PassportDto.builder().id(1L).build());
-        final RecordedRequest recordedRequest = WEB_SERVER.takeRequest();
+        final var result = exchange(
+            expected,
+            service -> service.update(PassportDto.builder().id(expectedId).build())
+        );
 
         assertThat(result).isNotNull()
             .isTrue();
 
-        assertThat(recordedRequest.getMethod()).isNotNull()
-            .isEqualToIgnoringCase("put");
-
-        assertThat(recordedRequest.getPath())
-            .isEqualTo(Utils.concat(
-                    infoHolder.getEntry().getPassport(),
-                    infoHolder.getEntry().getUpdate(),
-                    "?id=1"
-                )
-            );
+        assertRequest(
+            HttpMethod.PUT,
+            Utils.concat(
+                infoHolder.getEntry().getPassport(),
+                infoHolder.getEntry().getUpdate(),
+                "?id=" + expectedId
+            )
+        );
     }
 
     @Test
-    void delete() throws InterruptedException {
+    void delete() throws InterruptedException, JsonProcessingException {
         final boolean expected = true;
-        WEB_SERVER.enqueue(new MockResponse()
-            .setBody(String.valueOf(expected))
-            .setHeader("Content-Type", MediaType.APPLICATION_JSON.toString())
-        );
+        final Long expectedId = 1L;
 
-        final boolean result = service.delete(1L);
-        final RecordedRequest recordedRequest = WEB_SERVER.takeRequest();
+        final var result = exchange(
+            expected,
+            service -> service.delete(expectedId)
+        );
 
         assertThat(result).isNotNull()
             .isTrue();
 
-        assertThat(recordedRequest.getMethod()).isNotNull()
-            .isEqualToIgnoringCase("delete");
-
-        assertThat(recordedRequest.getPath())
-            .isEqualTo(Utils.concat(
-                    infoHolder.getEntry().getPassport(),
-                    infoHolder.getEntry().getDelete(),
-                    "?id=1"
-                )
-            );
+        assertRequest(
+            HttpMethod.DELETE,
+            Utils.concat(
+                infoHolder.getEntry().getPassport(),
+                infoHolder.getEntry().getDelete(),
+                "?id=" + expectedId
+            )
+        );
     }
 
     @Test
@@ -125,39 +116,134 @@ class PassportServiceImplTest implements WithAssertions {
                 .name("Test")
                 .build()
         );
-        WEB_SERVER.enqueue(new MockResponse()
-            .setBody(mapper.writeValueAsString(expected))
-            .setHeader("Content-Type", MediaType.APPLICATION_JSON.toString())
-        );
 
-        final List<PassportDto> result = service.findAll();
-        final RecordedRequest recordedRequest = WEB_SERVER.takeRequest();
+        final var result = exchange(expected, PassportService::findAll);
 
         assertThat(result).isNotNull()
             .hasSize(1)
             .isEqualTo(expected);
 
+        assertRequest(
+            HttpMethod.GET,
+            Utils.concat(
+                infoHolder.getEntry().getPassport(),
+                infoHolder.getEntry().getFind()
+            )
+        );
+    }
+
+    @Test
+    void findBySerial() throws JsonProcessingException, InterruptedException {
+        final Long serial = 1234L;
+        List<PassportDto> expected = Collections.singletonList(
+            PassportDto.builder()
+                .id(2L)
+                .serial(serial)
+                .name("Test")
+                .build()
+        );
+
+        final var result = exchange(
+            expected,
+            service -> service.findBySerial(serial)
+        );
+
+        assertThat(result).isNotNull()
+            .hasSize(1)
+            .isEqualTo(expected);
+
+        assertRequest(
+            HttpMethod.GET,
+            Utils.concat(
+                infoHolder.getEntry().getPassport(),
+                infoHolder.getEntry().getFindBySerial(),
+                "?serial=" + serial
+            )
+        );
+    }
+
+    @Test
+    void findUnavailable() throws JsonProcessingException, InterruptedException {
+        List<PassportDto> expected = Collections.singletonList(
+            PassportDto.builder()
+                .id(2L)
+                .serial(1234L)
+                .name("Test")
+                .build()
+        );
+
+        final var result = exchange(expected, PassportService::findUnavailable);
+
+        assertThat(result).isNotNull()
+            .hasSize(1)
+            .isEqualTo(expected);
+
+        assertRequest(
+            HttpMethod.GET,
+            Utils.concat(
+                infoHolder.getEntry().getPassport(),
+                infoHolder.getEntry().getUnavailable()
+            )
+        );
+    }
+
+    @Test
+    void findReplaceable() throws JsonProcessingException, InterruptedException {
+        List<PassportDto> expected = Collections.singletonList(
+            PassportDto.builder()
+                .id(2L)
+                .serial(1234L)
+                .name("Test")
+                .build()
+        );
+
+        final var result = exchange(expected, PassportService::findReplaceable);
+
+        assertThat(result).isNotNull()
+            .hasSize(1)
+            .isEqualTo(expected);
+
+        assertRequest(
+            HttpMethod.GET,
+            Utils.concat(
+                infoHolder.getEntry().getPassport(),
+                infoHolder.getEntry().getFindReplaceable()
+            )
+        );
+    }
+
+    private <T, V> T exchange(
+        final V expected,
+        final Function<PassportService<PassportDto>, T> action
+    ) throws JsonProcessingException {
+        WEB_SERVER.enqueue(
+            new MockResponse()
+                .setBody(mapper.writeValueAsString(expected))
+                .setHeader("Content-Type", MediaType.APPLICATION_JSON.toString())
+        );
+
+        return action.apply(service);
+    }
+
+    private void assertRequest(final HttpMethod expectedMethod, final String path) throws InterruptedException {
+        final RecordedRequest recordedRequest = WEB_SERVER.takeRequest();
+
         assertThat(recordedRequest.getMethod()).isNotNull()
-            .isEqualToIgnoringCase("get");
+            .isEqualTo(expectedMethod.name());
 
         assertThat(recordedRequest.getPath()).isNotNull()
-            .isEqualTo(Utils.concat())
+            .isEqualTo(path);
     }
 
-    @Test
-    void findBySerial() {
+    @AfterAll
+    static void afterAll() throws IOException {
+        WEB_SERVER.close();
     }
 
-    @Test
-    void findUnavailable() {
-    }
-
-    @Test
-    void findReplaceable() {
-    }
-
-    @AfterEach
-    void tearDown() {
-
+    private enum HttpMethod {
+        GET,
+        POST,
+        PUT,
+        DELETE
     }
 }
