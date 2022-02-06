@@ -30,18 +30,33 @@ public class PassportDto {
     @JsonProperty(value = "surname", required = true)
     private String surname;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy")
+    @JsonFormat(
+        shape = JsonFormat.Shape.STRING,
+        pattern = "dd.MM.yyyy",
+        timezone = "Europe/Moscow",
+        locale = "ru-RU"
+    )
     @JsonProperty(value = "birth_date", required = true)
     private Date birthDate;
 
     @JsonProperty(value = "issuing_authority", required = true)
     private String issuingAuthority;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy")
+    @JsonFormat(
+        shape = JsonFormat.Shape.STRING,
+        pattern = "dd.MM.yyyy",
+        timezone = "Europe/Moscow",
+        locale = "ru-RU"
+    )
     @JsonProperty(value = "date_of_issue", required = true)
     private Date dateOfIssue;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy")
+    @JsonFormat(
+        shape = JsonFormat.Shape.STRING,
+        pattern = "dd.MM.yyyy",
+        timezone = "Europe/Moscow",
+        locale = "ru-RU"
+    )
     @JsonProperty(value = "expired_date", required = true)
     private Date expiredDate;
 }

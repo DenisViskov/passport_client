@@ -1,5 +1,6 @@
 package com.example.passport_client.service;
 
+import com.example.passport_client.StubBuilder;
 import com.example.passport_client.config.PassportServiceApiInfoHolder;
 import com.example.passport_client.dto.PassportDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -46,7 +48,7 @@ class PassportServiceImplTest implements WithAssertions {
 
         final var result = exchange(
             expected,
-            service -> service.save(PassportDto.builder().serial(1234L).build())
+            service -> service.save(StubBuilder.builder().build())
         );
 
         assertThat(result).isNotNull()
@@ -68,7 +70,7 @@ class PassportServiceImplTest implements WithAssertions {
 
         final var result = exchange(
             expected,
-            service -> service.update(PassportDto.builder().id(expectedId).build(), expectedId)
+            service -> service.update(StubBuilder.builder().id(expectedId).build(), expectedId)
         );
 
         assertThat(result).isNotNull()
@@ -109,13 +111,7 @@ class PassportServiceImplTest implements WithAssertions {
 
     @Test
     void findAll() throws JsonProcessingException, InterruptedException {
-        List<PassportDto> expected = Collections.singletonList(
-            PassportDto.builder()
-                .id(2L)
-                .serial(1234L)
-                .name("Test")
-                .build()
-        );
+        List<PassportDto> expected = Collections.singletonList(StubBuilder.builder().build());
 
         final var result = exchange(expected, PassportService::findAll);
 
@@ -136,10 +132,8 @@ class PassportServiceImplTest implements WithAssertions {
     void findBySerial() throws JsonProcessingException, InterruptedException {
         final Long serial = 1234L;
         List<PassportDto> expected = Collections.singletonList(
-            PassportDto.builder()
-                .id(2L)
+            StubBuilder.builder()
                 .serial(serial)
-                .name("Test")
                 .build()
         );
 
@@ -165,10 +159,8 @@ class PassportServiceImplTest implements WithAssertions {
     @Test
     void findUnavailable() throws JsonProcessingException, InterruptedException {
         List<PassportDto> expected = Collections.singletonList(
-            PassportDto.builder()
-                .id(2L)
-                .serial(1234L)
-                .name("Test")
+            StubBuilder.builder()
+                .expiredDate(LocalDate.now().minusMonths(1))
                 .build()
         );
 
@@ -190,10 +182,8 @@ class PassportServiceImplTest implements WithAssertions {
     @Test
     void findReplaceable() throws JsonProcessingException, InterruptedException {
         List<PassportDto> expected = Collections.singletonList(
-            PassportDto.builder()
-                .id(2L)
-                .serial(1234L)
-                .name("Test")
+            StubBuilder.builder()
+                .expiredDate(LocalDate.now().plusMonths(2))
                 .build()
         );
 
