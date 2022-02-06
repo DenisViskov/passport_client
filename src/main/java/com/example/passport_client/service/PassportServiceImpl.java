@@ -23,6 +23,7 @@ public class PassportServiceImpl implements PassportService<PassportDto> {
     private PassportServiceApiInfoHolder apiInfoHolder;
 
     @Override public Long save(final PassportDto passport) {
+        log.debug("Try to save passport");
         return webClient.post()
             .uri(apiInfoHolder.getEntry().getSave())
             .bodyValue(passport)
@@ -33,6 +34,7 @@ public class PassportServiceImpl implements PassportService<PassportDto> {
     }
 
     @Override public boolean update(final PassportDto passport, final Long id) {
+        log.debug("Try to update passport with id: {}", id);
         return webClient.put()
             .uri(uriBuilder -> uriBuilder
                 .path(apiInfoHolder.getEntry().getUpdate())
@@ -52,6 +54,7 @@ public class PassportServiceImpl implements PassportService<PassportDto> {
     }
 
     @Override public boolean delete(final Long id) {
+        log.debug("Try to delete passport by id: {}", id);
         return webClient.delete()
             .uri(uriBuilder -> uriBuilder
                 .path(apiInfoHolder.getEntry().getDelete())
@@ -66,6 +69,7 @@ public class PassportServiceImpl implements PassportService<PassportDto> {
     }
 
     @Override public List<PassportDto> findAll() {
+        log.debug("Try to find all");
         return fetchSeveral(uriBuilder -> uriBuilder
             .path(apiInfoHolder.getEntry().getFind())
             .build()
@@ -73,6 +77,7 @@ public class PassportServiceImpl implements PassportService<PassportDto> {
     }
 
     @Override public List<PassportDto> findBySerial(final Long serial) {
+        log.debug("Try to find by serial: {}", serial);
         return fetchSeveral(uriBuilder -> uriBuilder
             .path(apiInfoHolder.getEntry().getFindBySerial())
             .queryParam("serial", serial)
@@ -81,6 +86,7 @@ public class PassportServiceImpl implements PassportService<PassportDto> {
     }
 
     @Override public List<PassportDto> findUnavailable() {
+        log.debug("Try to find unavailable");
         return fetchSeveral(uriBuilder -> uriBuilder
             .path(apiInfoHolder.getEntry().getUnavailable())
             .build()
@@ -88,6 +94,7 @@ public class PassportServiceImpl implements PassportService<PassportDto> {
     }
 
     @Override public List<PassportDto> findReplaceable() {
+        log.debug("Try to find replaceable");
         return fetchSeveral(uriBuilder -> uriBuilder
             .path(apiInfoHolder.getEntry().getFindReplaceable())
             .build()
