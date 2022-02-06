@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "passport-service-api")
 public class PassportServiceApiInfoHolder {
+
     private CommonDetails common;
 
     private Entry entry;
