@@ -4,7 +4,7 @@ passportServiceApi:
       host: localhost
       port: 9090
   entry:
-      passport: /passport
+      passport: /passports
       save: /save
       update: /update
       delete: /delete
