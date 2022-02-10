@@ -1,11 +1,11 @@
-POST http://{{HOST}}:{{PORT}}/{{ROOT_PATH}}/save
+PUT http://{{HOST}}:{{PORT}}/{{ROOT_PATH}}/update?id=8
 Content-Type: application/json
 
 {
   "id": "",
   "serial_number": 2230,
   "main_number": 188235,
-  "name": "John",
+  "name": "Test",
   "surname": "Garret",
   "birth_date": "02.12.1992",
   "issuing_authority": "Test issuing authority",

@@ -1,4 +1,4 @@
-GET http://{{HOST}}:{{PORT}}/{{ROOT_PATH}}/find
+DELETE http://{{HOST}}:{{PORT}}/{{ROOT_PATH}}/delete?id=1
 Accept: application/json
 
 > {%

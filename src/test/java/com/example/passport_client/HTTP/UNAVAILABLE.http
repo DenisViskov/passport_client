@@ -1,4 +1,4 @@
-GET http://{{HOST}}:{{PORT}}/{{ROOT_PATH}}/find
+GET http://{{HOST}}:{{PORT}}/{{ROOT_PATH}}/unavailable
 Accept: application/json
 
 > {%
