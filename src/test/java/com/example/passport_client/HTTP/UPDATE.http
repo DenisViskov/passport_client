@@ -1,0 +1,23 @@
+PUT http://{{HOST}}:{{PORT}}/{{ROOT_PATH}}/update?id=8
+Content-Type: application/json
+
+{
+  "id": "",
+  "serial_number": 2230,
+  "main_number": 188235,
+  "name": "Test",
+  "surname": "Garret",
+  "birth_date": "02.12.1992",
+  "issuing_authority": "Test issuing authority",
+  "date_of_issue": "30.01.2022",
+  "expired_date": "30.01.2033"
+}
+
+> {%
+
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+  client.assert(response.body != null, "Body is empty")
+});
+
+%}

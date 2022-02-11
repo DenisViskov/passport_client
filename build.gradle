@@ -18,13 +18,21 @@ repositories {
     mavenCentral()
 }
 
+def assertj = '3.22.0'
+def okhttp = '4.9.3'
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
+    testImplementation "org.assertj:assertj-core:${assertj}"
+    testImplementation "com.squareup.okhttp3:mockwebserver:${okhttp}"
+    testImplementation "com.squareup.okhttp3:okhttp:${okhttp}"
+    testImplementation 'org.springframework.boot:spring-boot-starter-web'
 }
 
 tasks.named('test') {
