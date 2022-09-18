@@ -2,6 +2,7 @@ plugins {
     id 'org.springframework.boot' version '2.6.3'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
+    id 'groovy'
 }
 
 group = 'com.example'
@@ -18,8 +19,12 @@ repositories {
     mavenCentral()
 }
 
-def assertj = '3.22.0'
-def okhttp = '4.9.3'
+ext {
+    assertj = '3.22.0'
+    okhttp = '4.9.3'
+    spockCore = '2.1-groovy-3.0'
+    spockSpring = '2.1-groovy-3.0'
+}
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
@@ -33,8 +38,10 @@ dependencies {
     testImplementation "com.squareup.okhttp3:mockwebserver:${okhttp}"
     testImplementation "com.squareup.okhttp3:okhttp:${okhttp}"
     testImplementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation "org.spockframework:spock-core:${spockCore}"
+    testImplementation "org.spockframework:spock-spring:${spockSpring}"
 }
 
-tasks.named('test') {
+test {
     useJUnitPlatform()
 }
